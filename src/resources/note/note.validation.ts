@@ -6,4 +6,13 @@ const create = Joi.object({
     content: Joi.string().required()
 });
 
-export default { create };
+const update = Joi.object({
+    id: Joi.number().required(),
+    name: Joi.string().required(),
+    created: Joi.string().required(),
+    category: Joi.string().required(),
+    content: Joi.string().required(),
+    isArchive: Joi.boolean().required()
+});
+
+export default { create, update };

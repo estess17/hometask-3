@@ -68,6 +68,37 @@ class NoteService {
         },
     ];
 
+    // Get all notes
+    public async getAll(): Promise<INote[]> {
+        try {
+            return this.notes;
+        } catch (error) {
+            throw new Error('Unable to get notes');
+        }
+    }
+
+    // Get note by id
+    public async getById(id: string): Promise<INote | undefined> {
+        try {
+            return this.notes.filter(note => note.id === +id)[0];
+        } catch (error) {
+            throw new Error('Unable to get note');
+        }
+    }
+
+    // Delete note
+    public async delete(id: string): Promise<INote | undefined> {
+        try {
+            const note = this.notes.filter(note => note.id === +id)[0];
+            this.notes = this.notes.filter(note => note.id !== +id);
+
+            return note;
+        } catch (error) {
+            throw new Error('Unable to delete note');
+        }
+    }
+
+
     // Create a new note
     public async create(name: string, category: string, content: string): Promise<INote> {
         try {
@@ -91,33 +122,46 @@ class NoteService {
         }
     }
 
-    // Get all notes
-    public async getAll(): Promise<INote[]> {
+    // Update note
+    public async update(id: string, data: INote): Promise<INote> {
         try {
-            return this.notes;
-        } catch (error) {
-            throw new Error('Unable to get notes');
-        }
-    }
+            let dates = data.content.match(/(\d{1,2}([.\-/])\d{1,2}([.\-/])\d{4})/g);
 
-    // Get note by id
-    public async getById(id: string): Promise<INote | undefined> {
-        try {
-            return this.notes.filter(note => note.id === +id)[0];
-        } catch (error) {
-            throw new Error('Unable to get note');
-        }
-    }
+            const note: INote = {
+                ...data,
+                dates: dates ? dates.join(', ') : '',
+            };
 
-    // Delete note
-    public async delete(id: string): Promise<INote | undefined> {
-        try {
-            const note = this.notes.filter(note => note.id === +id)[0]
-            this.notes = this.notes.filter(note => note.id !== +id);
+            this.notes = this.notes.map(n => n.id === note.id ? note : n);
 
             return note;
         } catch (error) {
-            throw new Error('Unable to delete note');
+            throw new Error('Unable to update note');
+        }
+    }
+
+    // Get notes stats
+    public async getStats(): Promise<any> {
+        try {
+            return [
+                {
+                    category: 'Task',
+                    active: this.notes.filter(note => note.category === 'Task' && !note.isArchive).length,
+                    archived: this.notes.filter(note => note.category === 'Task' && note.isArchive).length,
+                },
+                {
+                    category: 'Idea',
+                    active: this.notes.filter(note => note.category === 'Idea' && !note.isArchive).length,
+                    archived: this.notes.filter(note => note.category === 'Idea' && note.isArchive).length,
+                },
+                {
+                    category: 'Random Thought',
+                    active: this.notes.filter(note => note.category === 'Random Thought' && !note.isArchive).length,
+                    archived: this.notes.filter(note => note.category === 'Random Thought' && note.isArchive).length,
+                },
+            ];
+        } catch (error) {
+            throw new Error('Unable to get notes stats');
         }
     }
 }
