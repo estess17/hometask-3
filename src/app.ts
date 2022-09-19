@@ -5,9 +5,9 @@ import ErrorMiddleware from '@/middleware/error.middleware';
 
 class App {
     public express: Application;
-    public port: number;
+    public port: number | string;
 
-    constructor(controllers: Controller[], port: number) {
+    constructor(controllers: Controller[], port: number | string) {
         this.express = express();
         this.port = port;
 
