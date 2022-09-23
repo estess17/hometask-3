@@ -7,7 +7,7 @@ const app = new App(
     [
         new NoteController()
     ],
-    process.env.PORT || 5000,
+    process.env.PORT || 3000,
 );
 
 app.listen();
